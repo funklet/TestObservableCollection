@@ -1,0 +1,18 @@
+﻿@using TestObservableCollection.Model
+
+@code {
+    [Parameter]
+    public KeyValuePair<string, TestModel>? Datum { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (Datum.HasValue && Datum.Value.Value is not null)
+        {
+            Datum.Value.Value.Weight = 0;
+            Datum.Value.Value.Height = 1;
+            Datum.Value.Value.Age = 3;
+        }
+    }
+}

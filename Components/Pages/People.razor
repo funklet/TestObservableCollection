@@ -1,0 +1,73 @@
+﻿@page "/people"
+@using TestObservableCollection.Model
+@using TestObservableCollection.Services
+@rendermode InteractiveServer
+
+@inject DataService DataService;
+
+<PageTitle>People</PageTitle>
+
+<h1>People</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@{
+    if (DataService.TestData == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Added</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Height (cm)</th>
+                    <th>Weight (Kg)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var datum in DataService.TestData.OrderBy(x => x.Value.WhenAdded))
+                    {
+                        <tr>
+                            <td>@datum.Key</td>
+                            <td>@datum.Value.WhenAdded.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                            <td>@datum.Value.Age</td>
+                            <td>@datum.Value.Height</td>
+                            <td>@datum.Value.Weight</td>
+                        </tr>
+                        var r = new Random().Next(1, 16);
+                        if (r == 1)
+                        {
+                            Datum = datum;
+                            <ChangeItem Datum="@Datum"></ChangeItem>
+                        }
+
+                    }
+
+                }
+
+            </tbody>
+        </table>
+
+    }
+}
+
+@code {
+
+    KeyValuePair<string, TestModel> Datum;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        DataService.TestDataCollectionChanged += DataChanged;
+    }
+
+    private async void DataChanged(object? sender, EventArgs? e)
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+}
